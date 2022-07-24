@@ -9,6 +9,14 @@ from villard import V
 from villard.io import BaseDataReader
 
 
+@V.register_custom_data_reader("DT_PIL_IMAGE")
+class PILImageLoader(BaseDataReader):
+    def read_data(self, path: str, *args, **kwargs) -> object:
+        super().read_data(path, *args, **kwargs)
+        image = Image.open(path, *args, **kwargs)
+        return image
+
+
 def generate_single_image(
     image_key_name: str, image_size: int, object_size: int, n_objects: int
 ) -> Image:

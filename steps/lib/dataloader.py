@@ -36,4 +36,4 @@ class GeneratedDataset(Dataset):
             for image in images
         ]
 
-        return self.target_counts[idx], *image_tensors
+        return self.target_counts[idx], image_tensors
