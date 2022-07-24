@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from villard import V
 from villard.io import BaseDataReader
+from zmq import device
 
 from .lib.model import Model
 
@@ -20,14 +21,17 @@ class PytorchModelReader(BaseDataReader):
 def train_model(
     train_data_loader: DataLoader, max_epochs: int, n_views: int, n_classes: int
 ) -> Model:
-    model = Model(n_views=n_views, n_classes=n_classes)
-    ce_loss_fn = torch.nn.CrossEntropyLoss()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = Model(n_views=n_views, n_classes=n_classes).to(device)
+    ce_loss_fn = torch.nn.CrossEntropyLoss().to(device)
+
     adam = torch.optim.Adam(model.parameters(), lr=0.001)
     pbar = tqdm(range(max_epochs))
     for epoch in pbar:
         losses = []
         for i, batch in enumerate(train_data_loader):
-            count, views = batch[0], batch[1]
+            count, views = batch[0].to(device), batch[1].to(device)
             pred = model(views)
             loss = ce_loss_fn(pred, count - 1)
             loss.backward()
