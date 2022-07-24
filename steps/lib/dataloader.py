@@ -22,7 +22,14 @@ class GeneratedDataset(Dataset):
         return len(os.listdir(self.data_dir)) // self.n_views
 
     def __getitem__(self, idx):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
+
         images = []
         for view in range(self.n_views):
             filename = os.path.join(

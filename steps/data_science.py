@@ -21,9 +21,16 @@ class PytorchModelReader(BaseDataReader):
 def train_model(
     train_data_loader: DataLoader, max_epochs: int, n_views: int, n_classes: int
 ) -> Model:
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
 
     model = Model(n_views=n_views, n_classes=n_classes).to(device)
+    model.conv_blocks = [c.to(device) for c in model.conv_blocks]
     ce_loss_fn = torch.nn.CrossEntropyLoss().to(device)
 
     adam = torch.optim.Adam(model.parameters(), lr=0.001)
