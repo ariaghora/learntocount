@@ -27,7 +27,7 @@ def train_model(
     for epoch in pbar:
         losses = []
         for i, batch in enumerate(train_data_loader):
-            count, views = batch[0], batch[1:]
+            count, views = batch[0], batch[1]
             pred = model(views)
             loss = ce_loss_fn(pred, count - 1)
             loss.backward()
@@ -46,7 +46,7 @@ def evaluate_model(test_data_loader: DataLoader, model: Model) -> None:
     model = model.eval()
     with torch.no_grad():
         for i, batch in enumerate(test_data_loader):
-            count, views = batch[0], batch[1:]
+            count, views = batch[0], batch[1]
             pred = model(views).argmax(dim=1) + 1
             predictions.extend(pred.detach().numpy().tolist())
             actual.extend(count.detach().numpy())

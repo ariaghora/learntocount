@@ -1,4 +1,6 @@
 .DS_Store
 __pycache__
 data/02_intermediate/generated_test/*.png
+data/02_intermediate/generated_test/*.csv
 data/02_intermediate/generated_train/*.png
+data/02_intermediate/generated_train/*.csv
