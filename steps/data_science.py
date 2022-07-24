@@ -31,7 +31,7 @@ def train_model(
     for epoch in pbar:
         losses = []
         for i, batch in enumerate(train_data_loader):
-            count, views = batch[0].to(device), batch[1].to(device)
+            count, views = batch[0], batch[1]
             pred = model(views)
             loss = ce_loss_fn(pred, count - 1)
             loss.backward()

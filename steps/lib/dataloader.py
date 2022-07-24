@@ -22,6 +22,7 @@ class GeneratedDataset(Dataset):
         return len(os.listdir(self.data_dir)) // self.n_views
 
     def __getitem__(self, idx):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         images = []
         for view in range(self.n_views):
             filename = os.path.join(
@@ -32,8 +33,14 @@ class GeneratedDataset(Dataset):
             images.append(image)
 
         image_tensors = [
-            torch.from_numpy(np.array(image) / 255.0).float().permute(2, 0, 1)
+            torch.from_numpy(np.array(image) / 255.0)
+            .float()
+            .permute(2, 0, 1)
+            .to(device)
             for image in images
         ]
 
-        return self.target_counts[idx], image_tensors
+        count = self.target_counts[idx]
+        count = torch.tensor(count).long().to(device)
+
+        return count, image_tensors
